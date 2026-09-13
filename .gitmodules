@@ -1,0 +1,5 @@
+[submodule "Marlin"]
+	path = Marlin
+	url = https://github.com/MarlinFirmware/Marlin.git
+	shallow = true
+	ignore = dirty
