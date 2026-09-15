@@ -7,6 +7,14 @@ build from the Sanguino core:
 - last changed in commit `60fbbcf5eaa8ee9167051877b00fb02546c1ba97`
 - sha256 `83e8bcac3e177aa47b4fdbff8a5da66cb107e762a721093bb444ebcca130ea00`
 
-It occupies the top 1 KB of flash (0x1FC00). The matching fuses, from the same
-repository's `boards.txt`, are lfuse 0xFF, hfuse 0xDE, efuse 0xFD; they are
-applied by `scripts/isp.sh bootloader`.
+The hex is linked at byte 0x1FC00, the top 1 KB of flash, so BOOTSZ has to
+select a 512-word boot section based there. That makes the fuses lfuse 0xFF
+(external crystal), hfuse 0xDC (BOOTSZ=10 plus BOOTRST), efuse 0xFD (brown-out
+at 2.7 V), applied by `scripts/isp.sh bootloader`.
+
+Note that Sanguino's `boards.txt` pairs this same hex with hfuse 0xDE, which
+selects a 256-word section based at 0x1FE00. That matches neither where the hex
+is linked nor that file's own `upload.maximum_size` of 130048, which reserves
+1 KB. Burning 0xDE leaves the reset vector pointing at blank flash, so the
+bootloader never runs. The Melzi bootloader guides use 0xDC, and Marlin's
+`melzi_optiboot` environment reserves the same 1 KB.

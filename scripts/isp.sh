@@ -21,10 +21,15 @@ case "${1:-}" in
     avrdude -c "$PROG" -p $MCU -B 4 \
       -U flash:r:backup/stock_flash.hex:i -U eeprom:r:backup/stock_eeprom.hex:i ;;
   bootloader)
-    # Fuses per Sanguino boards.txt for ATmega1284P @ 16 MHz with optiboot:
-    # lfuse 0xFF external crystal, hfuse 0xDE 1 KB boot section + BOOTRST, efuse 0xFD BOD 2.7 V.
+    # Fuses for ATmega1284P @ 16 MHz with this optiboot build:
+    #   lfuse 0xFF  external crystal
+    #   hfuse 0xDC  BOOTSZ=10, a 512-word boot section based at 0x1FC00, which
+    #               is where the hex is linked, plus BOOTRST
+    #   efuse 0xFD  brown-out detect at 2.7 V
+    # Sanguino boards.txt says hfuse 0xDE here; see boot/README.md for why that
+    # value does not match its own bootloader hex and would not boot.
     avrdude -c "$PROG" -p $MCU -B 10 -e \
-      -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xDE:m -U efuse:w:0xFD:m
+      -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xDC:m -U efuse:w:0xFD:m
     avrdude -c "$PROG" -p $MCU -B 4 \
       -U flash:w:boot/optiboot_atmega1284p.hex:i -U lock:w:0x0F:m ;;
   *)
