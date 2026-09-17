@@ -49,8 +49,8 @@ Either the modification was unnecessary, or one of those measurements is wrong â
 second possibility also undermines the conclusion that 1.5 mmÂ² wire is adequate here.
 
 Cheap checks: re-measure the bed cold with the meter's leads shorted first and the reading
-noted, and clamp the supply current during a heat-up if a clamp meter turns up. The
-commissioning record is in [refurb-checklist.md](refurb-checklist.md).
+noted, and clamp the supply current during a heat-up if a clamp meter turns up. The commissioning
+record is in git history: `git log --diff-filter=D -p -- refurb-checklist.md`.
 
 ## Waiting on parts
 
