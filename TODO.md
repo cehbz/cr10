@@ -5,46 +5,26 @@ DC IN lugs re-terminated and verified 2026-09-19: bed to 70, all four lugs peake
 5 °C of each other, FET heatsink 55, bed-plug solder joints 58 — the warmest point in the
 circuit now — all falling once regulating, and nothing above 50 through the hour-plus the bed
 then held 70 during the cold pull.
+Hotend 2026-09-19: black plug removed from the PTFE tube; tube end judged fine and not cut;
+tube refitted hot and bottomed on the nozzle; three `G1 E30 F150` gray and glossy, a few small
+bubbles remaining.
 Background and all measured values: `~/.claude/knowledge/projects/cr10.md`.
 
-## 1. Finish the hotend
+## 1. Test prints
 
-**Found 2026-09-19:** an opaque black plug ~50 mm up inside the PTFE tube (filament in use
-is gray PETG) and dark residue on the outside of the tube's hotend end. Plug pushed out with
-filament. Hypothesis: these are the source of the specks, via a gap between tube end and
-nozzle. Test: specks absent after the reseat below.
+Calibration cube first, then a Benchy. The cube is also the test of the hotend hypothesis:
+no black specks in it, and the tube plug was the source.
 
-**Where it stopped:** hot purges through the bare hotend came out uniformly gray. Three cold
-pulls at 90 and 100 all snapped cleanly at the hotend entry, because the pulls were done
-with the tube out — the heat break and block are bored 4 mm for the tube, so melt backed up
-around the filament and set as a slug the pull could not move. Wrong procedure for this
-hotend, not a material limit. Some of that slug may still be in the bore.
-
-To finish, at 240:
-1. Confirm the tube end was cut back square past the grey smear (5–8 mm). If not, do it.
-2. Fresh filament in from the top, push until it extrudes freely, 20–30 mm. Pull it out hot.
-3. Refit the tube hot: collar up, push down through the heat break until it bottoms hard on
-   the nozzle. Stops short and springy → PETG in the bore: pull it, push filament through to
-   extrude, retry. Two or three rounds. Clip under the collar. Then try to push it further by
-   hand: it must not move.
-4. Refeed through the extruder. `G1 E30 F150` three times. Uniformly gray and glossy → done.
-5. Only if black persists: a cold pull **through the tube** — filament in from the extruder,
-   purge at 240, cool to 100, release the extruder lever, pull at the extruder end.
-
-Bubbles in the hot purge: air from an open hotend and a snapped stub is the likely cause.
-If bubbles persist past 50 mm of continuous extrusion with a crackle at the nozzle and a
-matte strand, dry the spool (65 °C, 4–6 h). The filament container's hygrometer is off;
-check it — under ~35% RH sealed means the silica gel is working, ambient means it is spent.
-
-## 2. Test prints
-
-Calibration cube first, then a Benchy.
+Bubbles: a few small ones persisted through ~90 mm of extrusion after the tube was refitted,
+so the open-hotend-air explanation is weaker. Before the cube, read the filament container's
+hygrometer — under ~35% RH means the silica gel is working; ambient means it is spent. If
+the cube strings or its surface is rough, dry the spool (65 °C, 4–6 h) before the Benchy.
 
 Glue stick on cool glass, covering the whole footprint including the left-edge strip where
 the prime line runs. Keep clips off the corners and off the left and right edges. Centre of
 the plate has a chip; avoid it or use `models/first_layer_test_offcentre.stl` as the pattern.
 
-## 3. Bed power — settled
+## 2. Bed power — settled
 
 **~150 ± 50 W, 11–17 A at 11.25 V, 0.65–1.0 Ω.** The 1.8 Ω in the record is wrong.
 
@@ -76,7 +56,7 @@ switch — a separate project, and nothing about the present wiring survives it.
 Residual, no test required: read the label on the bed PSU when the case is open, and
 record it. Its rating was never written down.
 
-## 4. Bed PID tune
+## 3. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
 so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
@@ -84,7 +64,7 @@ so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
 ## Waiting on parts
 
 - **MKS MOS25** ordered. An upgrade, not a fix: the clone measures 0.137 V and 50 °C once
-  wired correctly. Fit it when it lands. Bed current is 11–17 A (§3); the MOS25 is a 25 A
+  wired correctly. Fit it when it lands. Bed current is 11–17 A (§2); the MOS25 is a 25 A
   part by name — confirm the rating on the board before fitting.
 - **Ferrule crimper** ordered. Nothing needs it; the module takes lugs, not ferrules.
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
