@@ -1,71 +1,121 @@
 # CR-10 — next session
 
 Machine prints. Bed regulates, calibration done bar the bed PID, first-layer test clean.
-Background and all measured values: `~/.claude/knowledge/projects/cr10.md`. Refurbishment
-checklist with per-item history: `~/projects/pkm/vault/tasks/7 cr10_refurb_checklist.md`.
+DC IN lugs re-terminated and verified 2026-09-19: bed to 70, all four lugs peaked ~49 within
+5 °C of each other, FET heatsink 55, bed-plug solder joints 58 — the warmest point in the
+circuit now — all falling once regulating, and nothing above 50 through the hour-plus the bed
+then held 70 during the cold pull.
+Background and all measured values: `~/.claude/knowledge/projects/cr10.md`.
 
-## 1. Re-terminate the DC IN lugs
+## 1. Finish the hotend
 
-The only original terminations left. They run 70–95 °C under the same current at which the
-re-crimped bed pair runs 40 °C. Retightening the screws changed nothing.
+**Found 2026-09-19:** an opaque black plug ~50 mm up inside the PTFE tube (filament in use
+is gray PETG) and dark residue on the outside of the tube's hotend end. Plug pushed out with
+filament. Hypothesis: these are the source of the specks, via a gap between tube end and
+nozzle. Test: specks absent after the reseat below.
 
-Cut back past any discoloured copper, crimp fresh fork or ring lugs, refit under the square
-washers. Blue lugs in the blue die, red in the red; whichever, tug-test each one. Not
-ferrules — this is a barrier block, screws with washers, so lugs are the correct part.
+**Where it stopped:** hot purges through the bare hotend came out uniformly gray. Three cold
+pulls at 90 and 100 all snapped cleanly at the hotend entry, because the pulls were done
+with the tube out — the heat break and block are bored 4 mm for the tube, so melt backed up
+around the filament and set as a slug the pull could not move. Wrong procedure for this
+hotend, not a material limit. Some of that slug may still be in the bore.
 
-Cold work, machine off. Wire is 1.5 mm², tin-plated strands, which is normal and crimps fine.
+To finish, at 240:
+1. Confirm the tube end was cut back square past the grey smear (5–8 mm). If not, do it.
+2. Fresh filament in from the top, push until it extrudes freely, 20–30 mm. Pull it out hot.
+3. Refit the tube hot: collar up, push down through the heat break until it bottoms hard on
+   the nozzle. Stops short and springy → PETG in the bore: pull it, push filament through to
+   extrude, retry. Two or three rounds. Clip under the collar. Then try to push it further by
+   hand: it must not move.
+4. Refeed through the extruder. `G1 E30 F150` three times. Uniformly gray and glossy → done.
+5. Only if black persists: a cold pull **through the tube** — filament in from the extruder,
+   purge at 240, cool to 100, release the extruder lever, pull at the extruder end.
 
-## 2. Cold pull the hotend
+Bubbles in the hot purge: air from an open hotend and a snapped stub is the likely cause.
+If bubbles persist past 50 mm of continuous extrusion with a crackle at the nozzle and a
+matte strand, dry the spool (65 °C, 4–6 h). The filament container's hygrometer is off;
+check it — under ~35% RH sealed means the silica gel is working, ambient means it is spent.
 
-Black PLA from the previous owner is still shedding into the extrusion, causing specks,
-blobs and brief flow stops after 430 mm of purging. Not a purge-clears-it problem.
+## 2. Test prints
 
-Heat 240, draw the filament back at the extruder, free the Bowden at the hotend coupler,
-inspect the tube end (the PTFE-to-nozzle joint is this hotend's known trap), feed filament by
-hand until clean, cool to ~90, pull straight up with pliers. Repeat until the tip is clean.
-Order PTFE if the end is belled or charred.
-
-## 3. Verify both, one run
-
-Bed to 70. Infrared on all four module terminals: they should now read alike. Watch the FET,
-which should sit near 50. Then a short purge and check the extrudate is uniformly PETG.
-
-Abort if any terminal runs well above the others, or anything passes 120.
-
-## 4. Test prints
-
-Calibration cube first — it also supplies the motion-accuracy figure, which is still
-unmeasured. Then a Benchy.
+Calibration cube first, then a Benchy.
 
 Glue stick on cool glass, covering the whole footprint including the left-edge strip where
 the prime line runs. Keep clips off the corners and off the left and right edges. Centre of
 the plate has a chip; avoid it or use `models/first_layer_test_offcentre.stl` as the pattern.
 
-## 5. Work out the bed power story
+## 3. Bed power — settled
 
-The bed measures 1.8 Ω and draws about 70 W, which the mainboard's own bed output could have
-driven. Nothing explains why this machine has a second PSU and an external switch at all.
-Either the modification was unnecessary, or one of those measurements is wrong — and the
-second possibility also undermines the conclusion that 1.5 mm² wire is adequate here.
+**~150 ± 50 W, 11–17 A at 11.25 V, 0.65–1.0 Ω.** The 1.8 Ω in the record is wrong.
 
-Cheap checks: re-measure the bed cold with the meter's leads shorted first and the reading
-noted, and clamp the supply current during a heat-up if a clamp meter turns up. The commissioning
-record is in git history: `git log --diff-filter=D -p -- refurb-checklist.md`.
+From the one clean run, 2026-09-17 11:03–11:07: replacement module, polarity corrected,
+FET saturated, 0.13 V across it, 11.25 V at the bed; **46 → 63 °C in ~3:40** by message
+timestamps, ~0.077 K/s at ΔT ≈ 24 K. Plate and glass 1.2–1.5 kJ/K, still-air losses
+45–70 W at that ΔT, so gross 140–185 W. A 70 W bed would net 1–24 W against those losses
+and take a quarter of an hour over that span. Vendor spec for this bed is 220 W / 18 A /
+≈0.65 Ω; the measurement sits on it.
+
+The earlier evidence, in sequence, and why none of it overrode this:
+- 2026-09-10, **1.8 Ω**: raw DMM reading, lead zeroing and probe location never stated.
+- 2026-09-16, original module with its open terminal block, lug at 140–150: 59 → 64 in
+  1:48, overshoot to 73. Bed voltage never measured; a joint at 150 °C is dropping real
+  voltage, so this run under-reads the bed. It came out ~115–160 W gross, lower than the
+  clean run, as it should.
+- 2026-09-17 morning, replacement module reversed: body diode in the loop, no power
+  information in it.
+
+**Why the second PSU is there:** this is an 18 A-class bed. On the stock 30 A supply with
+hotend and steppers that is 75–85% loaded, and the Melzi's own bed terminal is the
+documented burn point at this current. Own supply plus external switch is the ordinary fix
+for both. It applies to this machine; keep it.
+
+**What it does not give you:** 24 V on the bed, which is the version of this mod with a
+real payoff (heat-up in minutes rather than ~10). That needs 10 AWG and a 40 A-class
+switch — a separate project, and nothing about the present wiring survives it.
+
+Residual, no test required: read the label on the bed PSU when the case is open, and
+record it. Its rating was never written down.
+
+## 4. Bed PID tune
+
+Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
+so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
 
 ## Waiting on parts
 
 - **MKS MOS25** ordered. An upgrade, not a fix: the clone measures 0.137 V and 50 °C once
-  wired correctly. Fit it when it lands. The bed PID tune does not wait on it.
+  wired correctly. Fit it when it lands. Bed current is 11–17 A (§3); the MOS25 is a 25 A
+  part by name — confirm the rating on the board before fitting.
 - **Ferrule crimper** ordered. Nothing needs it; the module takes lugs, not ferrules.
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
   right surface for PETG and would end the glass chipping.
+- Considered, not started: **24 V on the bed.** The version of the second-PSU mod with a
+  real payoff — heat-up in a few minutes rather than ~10, and 80 °C within reach. Two 12 V
+  supplies in series into the bed only, external switch stays in the negative leg (the
+  clone's PC817 input is isolated, so the stack can float). Not a drop-in: ~37 A full-on on
+  this bed, so 10 AWG on the run, a 40 A-class switch (not the MOS25), `MAX_BED_POWER`
+  back to ~128 or accept the inrush, and the negative-to-negative bond between the supplies
+  has to go. Decide after a few prints whether the heat-up actually bothers you.
+- Considered, not ordered: bed insulation mat (cork or foil-faced) under the plate. Cheap,
+  no electrical risk, cuts heat-up time and holding duty. Check whether one is already
+  fitted before buying.
 
 ## Standing
 
 Do not leave it running unattended yet. The hotend and both thermistors are validated. The
-bed circuit is not, on two counts: one known hot joint at the DC IN lugs, and nothing has run
-longer than a few minutes since the polarity was corrected. Re-terminate those lugs and watch
-one full-length print, and that condition is discharged.
+bed circuit has now had, with correct polarity: a ~20-minute soak at 70 during the 09-17
+first-layer test (old DC IN lugs, 70–90 °C), and the 09-19 verification run with all four
+terminations fresh and cool. Watch one full-length print — the cube — and that condition is
+discharged.
+
+**No bed thermal fuse.** Decided 2026-09-19: not going to fit one, not going to check for
+one. The mitigation is attendance, and the one failure of this class that occurred — the
+reversed DC input, which heated the bed whenever the machine had power, commanded or not —
+was in fact caught that way. Settled; do not re-raise.
 
 The uncommanded heating was a wiring error and is cured, demonstrated rather than assumed:
-full supply across the device when commanded off, device at ambient, bed flat.
+full supply across the device when commanded off, device at ambient, bed flat. One earlier
+observation stays unexplained: 2026-09-11, original module, bed commanded off at 73 and read
+77 then 83. That module's input polarity was never observed, so the same reversal would
+account for it; the wiring was redone when it was replaced and it cannot now be tested. The
+full-length attended print is what stands in for it.
