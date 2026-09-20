@@ -1,30 +1,37 @@
 # CR-10 — next session
 
-Machine prints. Bed regulates, calibration done bar the bed PID, first-layer test clean.
-DC IN lugs re-terminated and verified 2026-09-19: bed to 70, all four lugs peaked ~49 within
-5 °C of each other, FET heatsink 55, bed-plug solder joints 58 — the warmest point in the
-circuit now — all falling once regulating, and nothing above 50 through the hour-plus the bed
-then held 70 during the cold pull.
-Hotend 2026-09-19: black plug removed from the PTFE tube; tube end judged fine and not cut;
-tube refitted hot and bottomed on the nozzle; three `G1 E30 F150` gray and glossy, a few small
-bubbles remaining.
-Background and all measured values: `~/.claude/knowledge/projects/cr10.md`.
+Machine prints. Cube within 0.5 % on all axes; Benchy completed 2026-09-20 with the recessed
+lettering intact on a 0.3 mm / 120 % width / 105 % flow / 240 °C first layer at bed 75.
+Remaining defect is heavy stringing and zits, and the filament is wet: 78 % RH in the
+container after a night sealed. Background and all measured values:
+`~/.claude/knowledge/projects/cr10.md`; history `~/.claude/knowledge/projects/cr10/observations.md`.
 
-## 1. Test prints
+## 1. Dry the filament
 
-Calibration cube first, then a Benchy. The cube is also the test of the hotend hypothesis:
-no black specks in it, and the tube plug was the source.
+The container's silica gel is spent. Fresh sealed packets: outer plastic wrapper off, sachet
+closed, into the box. Then the spool: **on the printer bed at 60 °C, hotend off, cardboard box
+over it, 4–6 h.** The bed PID holds to a degree; the spool label's ceiling is 70 and the oven
+can't be trusted under it. IR on the spool after the first hour. Back into the box with the
+fresh gel; the hygrometer should read under ~35 % by the next morning.
 
-Bubbles: a few small ones persisted through ~90 mm of extrusion after the tube was refitted,
-so the open-hotend-air explanation is weaker. Before the cube, read the filament container's
-hygrometer — under ~35% RH means the silica gel is working; ambient means it is spent. If
-the cube strings or its surface is rough, dry the spool (65 °C, 4–6 h) before the Benchy.
+Retraction tuning on a wet spool is wasted; nothing in §2's second block until this is done.
 
-Glue stick on cool glass, covering the whole footprint including the left-edge strip where
-the prime line runs. Keep clips off the corners and off the left and right edges. Centre of
-the plate has a chip; avoid it or use `models/first_layer_test_offcentre.stl` as the pattern.
+## 2. Cura
 
-## 2. Bed power — settled
+**Save what worked.** The attempt-4 first-layer settings are unsaved overrides (Cura keeps
+them in `user/*.inst.cfg`, so they survive restarts, but not a profile switch). Update the
+`Tuned, PETG, Claude` profile with them: initial layer height 0.3, initial layer line width
+120 %, initial layer flow 105 %, printing temperature initial layer 240, top/bottom line
+directions `[90]`, build plate temperature 75.
+
+**For the cases:** Initial Layer Horizontal Expansion −0.2. The fat first layer leaves a
+slight foot; on a case that is what makes a lid bind. First-layer only, adhesion untouched.
+
+**Stringing and zits, after §1:** retraction distance 6.5 (ceiling 7), retraction speed 40,
+retraction minimum travel 0.8, printing temperature 230, Enable Coasting on, Retract Before
+Outer Wall on. Z hop stays off. Judge on a second Benchy or the first case.
+
+## 3. Bed power — settled
 
 **~150 ± 50 W, 11–17 A at 11.25 V, 0.65–1.0 Ω.** The 1.8 Ω in the record is wrong.
 
@@ -56,7 +63,7 @@ switch — a separate project, and nothing about the present wiring survives it.
 Residual, no test required: read the label on the bed PSU when the case is open, and
 record it. Its rating was never written down.
 
-## 3. Bed PID tune
+## 4. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
 so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
@@ -64,7 +71,7 @@ so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
 ## Waiting on parts
 
 - **MKS MOS25** ordered. An upgrade, not a fix: the clone measures 0.137 V and 50 °C once
-  wired correctly. Fit it when it lands. Bed current is 11–17 A (§2); the MOS25 is a 25 A
+  wired correctly. Fit it when it lands. Bed current is 11–17 A (§3); the MOS25 is a 25 A
   part by name — confirm the rating on the board before fitting.
 - **Ferrule crimper** ordered. Nothing needs it; the module takes lugs, not ferrules.
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
@@ -82,11 +89,10 @@ so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
 
 ## Standing
 
-Do not leave it running unattended yet. The hotend and both thermistors are validated. The
-bed circuit has now had, with correct polarity: a ~20-minute soak at 70 during the 09-17
-first-layer test (old DC IN lugs, 70–90 °C), and the 09-19 verification run with all four
-terminations fresh and cool. Watch one full-length print — the cube — and that condition is
-discharged.
+The full-length attended print has happened: the Benchy ran over an hour at bed 75 with
+correct polarity and all four module terminations fresh, and nothing in the bed circuit ran
+warm. The condition that gated unattended running is discharged. Whether to leave it running
+— drying on the bed is hours of bed-only at 60 — is your call, not a rule.
 
 **No bed thermal fuse.** Decided 2026-09-19: not going to fit one, not going to check for
 one. The mitigation is attendance, and the one failure of this class that occurred — the
@@ -97,5 +103,4 @@ The uncommanded heating was a wiring error and is cured, demonstrated rather tha
 full supply across the device when commanded off, device at ambient, bed flat. One earlier
 observation stays unexplained: 2026-09-11, original module, bed commanded off at 73 and read
 77 then 83. That module's input polarity was never observed, so the same reversal would
-account for it; the wiring was redone when it was replaced and it cannot now be tested. The
-full-length attended print is what stands in for it.
+account for it; the wiring was redone when it was replaced and it cannot now be tested.
