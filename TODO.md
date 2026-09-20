@@ -14,56 +14,20 @@ over it, 4–6 h.** The bed PID holds to a degree; the spool label's ceiling is 
 can't be trusted under it. IR on the spool after the first hour. Back into the box with the
 fresh gel; the hygrometer should read under ~35 % by the next morning.
 
-Retraction tuning on a wet spool is wasted; nothing in §2's second block until this is done.
+Retraction tuning on a wet spool is wasted; §2 waits on this.
 
-## 2. Cura
+## 2. First case, on the dry spool
 
-**Save what worked.** The attempt-4 first-layer settings are unsaved overrides (Cura keeps
-them in `user/*.inst.cfg`, so they survive restarts, but not a profile switch). Update the
-`Tuned, PETG, Claude` profile with them: initial layer height 0.3, initial layer line width
-120 %, initial layer flow 105 %, printing temperature initial layer 240, top/bottom line
-directions `[90]`, build plate temperature 75.
+The profile `Tuned, PETG, Claude` is complete and saved (every override and its reason:
+`~/.claude/knowledge/projects/cr10.md`, Slicing). The retraction and coasting rows in it were
+set on a wet spool and have not been judged. The first case print is the judge: stringing
+between features, zits at wall ends, and whether the −0.2 first-layer expansion leaves the
+base square enough for a lid.
 
-**For the cases:** Initial Layer Horizontal Expansion −0.2. The fat first layer leaves a
-slight foot; on a case that is what makes a lid bind. First-layer only, adhesion untouched.
+Residual, no test required: read the label on the bed PSU when the case is open, and record
+it in the observations log. Its rating was never written down.
 
-**Stringing and zits, after §1:** retraction distance 6.5 (ceiling 7), retraction speed 40,
-retraction minimum travel 0.8, printing temperature 230, Enable Coasting on, Retract Before
-Outer Wall on. Z hop stays off. Judge on a second Benchy or the first case.
-
-## 3. Bed power — settled
-
-**~150 ± 50 W, 11–17 A at 11.25 V, 0.65–1.0 Ω.** The 1.8 Ω in the record is wrong.
-
-From the one clean run, 2026-09-17 11:03–11:07: replacement module, polarity corrected,
-FET saturated, 0.13 V across it, 11.25 V at the bed; **46 → 63 °C in ~3:40** by message
-timestamps, ~0.077 K/s at ΔT ≈ 24 K. Plate and glass 1.2–1.5 kJ/K, still-air losses
-45–70 W at that ΔT, so gross 140–185 W. A 70 W bed would net 1–24 W against those losses
-and take a quarter of an hour over that span. Vendor spec for this bed is 220 W / 18 A /
-≈0.65 Ω; the measurement sits on it.
-
-The earlier evidence, in sequence, and why none of it overrode this:
-- 2026-09-10, **1.8 Ω**: raw DMM reading, lead zeroing and probe location never stated.
-- 2026-09-16, original module with its open terminal block, lug at 140–150: 59 → 64 in
-  1:48, overshoot to 73. Bed voltage never measured; a joint at 150 °C is dropping real
-  voltage, so this run under-reads the bed. It came out ~115–160 W gross, lower than the
-  clean run, as it should.
-- 2026-09-17 morning, replacement module reversed: body diode in the loop, no power
-  information in it.
-
-**Why the second PSU is there:** this is an 18 A-class bed. On the stock 30 A supply with
-hotend and steppers that is 75–85% loaded, and the Melzi's own bed terminal is the
-documented burn point at this current. Own supply plus external switch is the ordinary fix
-for both. It applies to this machine; keep it.
-
-**What it does not give you:** 24 V on the bed, which is the version of this mod with a
-real payoff (heat-up in minutes rather than ~10). That needs 10 AWG and a 40 A-class
-switch — a separate project, and nothing about the present wiring survives it.
-
-Residual, no test required: read the label on the bed PSU when the case is open, and
-record it. Its rating was never written down.
-
-## 4. Bed PID tune
+## 3. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
 so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
@@ -71,7 +35,7 @@ so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
 ## Waiting on parts
 
 - **MKS MOS25** ordered. An upgrade, not a fix: the clone measures 0.137 V and 50 °C once
-  wired correctly. Fit it when it lands. Bed current is 11–17 A (§3); the MOS25 is a 25 A
+  wired correctly. Fit it when it lands. Bed current is 11–17 A; the MOS25 is a 25 A
   part by name — confirm the rating on the board before fitting.
 - **Ferrule crimper** ordered. Nothing needs it; the module takes lugs, not ferrules.
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
