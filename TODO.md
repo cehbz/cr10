@@ -1,33 +1,42 @@
 # CR-10 — next session
 
-Machine prints. Cube within 0.5 % on all axes; Benchy completed 2026-09-20 with the recessed
-lettering intact on a 0.3 mm / 120 % width / 105 % flow / 240 °C first layer at bed 75.
-Remaining defect is heavy stringing and zits, and the filament is wet: 78 % RH in the
-container after a night sealed. Background and all measured values:
-`~/.claude/knowledge/projects/cr10.md`; history `~/.claude/knowledge/projects/cr10/observations.md`.
+Machine prints. Filament dried; the storage box sits at ~10 % RH with ~120 g of gel in a
+printed tray. Background and measured values: `~/.claude/knowledge/projects/cr10.md`;
+history `~/.claude/knowledge/projects/cr10/observations.md`.
 
-## 1. Dry the filament
+## 1. Silent mid-print reboot
 
-The container's silica gel is spent. Fresh sealed packets: outer plastic wrapper off, sachet
-closed, into the box. Then the spool: **on the printer bed at 60 °C, hotend off, cardboard box
-over it, 4–6 h.** The bed PID holds to a degree; the spool label's ceiling is 70 and the oven
-can't be trusted under it. IR on the spool after the first hour. Back into the box with the
-fresh gel; the hygrometer should read under ~35 % by the next morning.
+Desiccant-box attempt 2: the printer rebooted partway through the first layers with no LCD
+message and no USB connected. Marlin shows a message and halts on a thermal fault, and
+reports SD errors, so neither fits a silent reboot. Surviving: brownout (the bed's 11–17 A returns
+through the negative-to-negative bond between the supplies), watchdog reset (RAM 15296 /
+16384 B, a print of thousands of short moves), mains glitch. Not seen since.
 
-Retraction tuning on a wet spool is wasted; §2 waits on this.
+If it recurs: start `picocom -b 115200 --imap lfcrlf --logfile <file>
+/dev/tty.usbserial-A906UGE8` before the print (opening the port resets the board once,
+harmless before a print), start the print from the LCD, leave it logging. The boot banner
+after a reboot names the cause: Brown out / Watchdog / Power-Up.
 
-## 2. First case, on the dry spool
+## 2. Bed temperature margin on long parts
 
-The profile `Tuned, PETG, Claude` is complete and saved (every override and its reason:
-`~/.claude/knowledge/projects/cr10.md`, Slicing). The retraction and coasting rows in it were
-set on a wet spool and have not been judged. The first case print is the judge: stringing
-between features, zits at wall ends, and whether the −0.2 first-layer expansion leaves the
-base square enough for a lid.
+Same part: attempt 1 halted with a bed heating failure during heat-up at 75
+(`WATCH_BED_TEMP` 2 °C / 60 s); attempt 3 lifted a corner at 70 on the 215 mm floor. The
+margin is thin at both ends. Two fans were moving air past the printer toward an open
+window during these prints; a draught would explain the heating failure, the lift and the
+unfused wall pillars together (hypothesis). Prints since, with the window closed and the
+fans off, have shown no fusing problems; the heating failure and the lift haven't been
+re-checked on a long part. Untested: a 5 mm brim on long PETG parts may prevent the lift.
+
+## 3. First real case: the fan controller enclosure
+
+Judges what the dry-spool prints haven't yet: the −0.2 first-layer expansion against a lid
+fit, and the retraction/coasting set on a part that isn't perforated (the dry-spool lid
+printed with no stringing).
 
 Residual, no test required: read the label on the bed PSU when the case is open, and record
 it in the observations log. Its rating was never written down.
 
-## 3. Bed PID tune
+## 4. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
 so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
