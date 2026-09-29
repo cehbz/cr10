@@ -27,16 +27,20 @@ unfused wall pillars together (hypothesis). Prints since, with the window closed
 fans off, have shown no fusing problems; the heating failure and the lift haven't been
 re-checked on a long part. Untested: a 5 mm brim on long PETG parts may prevent the lift.
 
-## 3. First real case: the fan controller enclosure
+## 3. Snap-post enclosure (printing)
 
-Judges what the dry-spool prints haven't yet: the −0.2 first-layer expansion against a lid
-fit, and the retraction/coasting set on a part that isn't perforated (the dry-spool lid
-printed with no stringing).
+Second version of the fan controller enclosure, with split snap posts through the board's
+M2.5 holes in place of plain supports. At M2.5 each post half is about 0.7 mm after a 1 mm
+slot, close to what a 0.4 mm nozzle prints reliably. Record whether the halves survive
+pushing the board on and taking it off, and where any failure breaks (layer line or
+across).
 
-Residual, no test required: read the label on the bed PSU when the case is open, and record
-it in the observations log. Its rating was never written down.
+## 4. Bed PSU label
 
-## 4. Bed PID tune
+Read the rating on the bed PSU when the case is open, and record it in the observations
+log. It was never written down.
+
+## 5. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
 so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
