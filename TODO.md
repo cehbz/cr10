@@ -17,40 +17,23 @@ If it recurs: start `picocom -b 115200 --imap lfcrlf --logfile <file>
 harmless before a print), start the print from the LCD, leave it logging. The boot banner
 after a reboot names the cause: Brown out / Watchdog / Power-Up.
 
-## 2. Bed temperature margin on long parts
-
-Same part: attempt 1 halted with a bed heating failure during heat-up at 75
-(`WATCH_BED_TEMP` 2 °C / 60 s); attempt 3 lifted a corner at 70 on the 215 mm floor. The
-margin is thin at both ends. Two fans were moving air past the printer toward an open
-window during these prints; a draught would explain the heating failure, the lift and the
-unfused wall pillars together (hypothesis). Prints since, with the window closed and the
-fans off, have shown no fusing problems; the heating failure and the lift haven't been
-re-checked on a long part. Untested: a 5 mm brim on long PETG parts may prevent the lift.
-
-## 3. Snap-post enclosure (printing)
-
-Second version of the fan controller enclosure, with split snap posts through the board's
-M2.5 holes in place of plain supports. At M2.5 each post half is about 0.7 mm after a 1 mm
-slot, close to what a 0.4 mm nozzle prints reliably. Record whether the halves survive
-pushing the board on and taking it off, and where any failure breaks (layer line or
-across).
-
-## 4. Bed PSU label
+## 2. Bed PSU label
 
 Read the rating on the bed PSU when the case is open, and record it in the observations
 log. It was never written down.
 
-## 5. Bed PID tune
+## 3. Bed PID tune
 
 Still on Marlin defaults. It holds setpoint, so this is polish. `MAX_BED_POWER` is 255,
-so nothing is capping bed duty. Independent of the MOS25 — do not wait for it.
+so nothing is capping bed duty.
 
-## Waiting on parts
+## 4. Corner lift on a long floor
 
-- **MKS MOS25** ordered. An upgrade, not a fix: the clone measures 0.137 V and 50 °C once
-  wired correctly. Fit it when it lands. Bed current is 11–17 A; the MOS25 is a 25 A
-  part by name — confirm the rating on the board before fitting.
-- **Ferrule crimper** ordered. Nothing needs it; the module takes lugs, not ferrules.
+On the next PETG part with a floor of about 200 mm or more, observe whether a corner lifts
+at bed 75 with the window closed and the fans off.
+
+## Considered
+
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
   right surface for PETG and would end the glass chipping.
 - Considered, not started: **24 V on the bed.** The version of the second-PSU mod with a
