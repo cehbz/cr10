@@ -32,6 +32,14 @@ so nothing is capping bed duty.
 On the next PETG part with a floor of about 200 mm or more, observe whether a corner lifts
 at bed 75 with the window closed and the fans off.
 
+## 5. RX100M6 tripod bracket
+
+Fit the print of `models/rx100m6-bracket.stl`. Dry, with the dummy battery in: the door
+resting on the slope's end without pinching the cable, the door's hinge arms clearing the
+boss, nothing touching the lens or LCD. When the 1/2" button-head screws and 1/4"-20 nuts
+arrive: the screw's protrusion, and whether the camera turns on the screw (a lip or a pad if
+it does). Design in the KB node, Enclosures for other projects.
+
 ## Considered
 
 - Considered, not ordered: textured PEI spring steel with magnetic base, ~฿900, which is the
